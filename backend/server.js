@@ -20,9 +20,9 @@ app.use(session({
     saveUninitialized: false,
   }));
 const connection = mysql.createPool({
-    host: '127.0.0.1',
+    host: 'localhost',
     user: 'root',
-    password: 'hemspalani@2003',
+    password: 'Assami1$',
     database: 'eventbridge'
 })
 app.listen(3002,()=>{
@@ -91,13 +91,14 @@ app.post('/dashboard', (req, res) => {
 
 app.post('/dashboard/createevent',(req,res)=>{
     console.log("Call here");   
-    const sql1= "INSERT INTO events(`title`,`orgname`,`venue`,`date`,`orgemail`,`accommodation`,`type`) VALUES (?)";
+    const sql1= "INSERT INTO events(`title`,`orgname`,`venue`,`date`,`orgemail`,`timings`,`accommodation`,`type`) VALUES (?)";
     const values = [
         req.body.title,
         req.body.name,
         req.body.venue,
         req.body.date,
         req.body.email,
+        req.body.timings,
         req.body.accommodation,
         req.body.type
     ]
@@ -109,6 +110,25 @@ app.post('/dashboard/createevent',(req,res)=>{
         return res.json('Success');
     });
   });
+  app.get('/dashboard/eventdetails/:eventid',(req,res)=>{
+    const eventids = req.params.eventid;
+    
+    console.log(eventids)
+    const sqld = "SELECT EVENTID,TITLE,ORGNAME,VENUE,DATE,TIMINGS,ORGEMAIL from EVENTS where EVENTID = ?";
+    
+    connection.query(sqld,eventids,(err,data)=>{
+      if(err){
+        console.log(err);
+        return;
+      }
+      else{
+        console.log("Registered successfully");
+        console.log("event data is ",data);
+        res.send(data);
+      }
+    })
+  })
+ 
 
   app.get("/dashboard/fetch",(req,res)=>{
     const sqlq="SELECT EVENTID,TITLE,VENUE,DATE,TIMINGS,ACCOMMODATION,TYPE FROM EVENTS";
@@ -234,5 +254,76 @@ app.post('/dashboard/createevent',(req,res)=>{
         return;
       }
       else console.log("Deleted successfully");
+    })
+  })
+  app.post('/dashboard/bars', (req, res) => {
+    const sql1 = "select orgname as Orgname,count(*) as Count from events group by orgname order by count(*) desc limit 4";
+    connection.query(sql1, (err, data) => {
+      if (err) {
+        console.log("Error fetching data:", err);
+        res.status(500).send("Error fetching data");
+      } else {
+        console.log("Change in data fetched");
+        res.send(data);
+      }
+    })
+  })
+
+  app.get('/dashboard/pie1/:name',(req,res)=>{
+    console.log("Hi there")
+    const names = req.params.name;
+    const sqlq = "SELECT COUNT(*) AS Count FROM events WHERE orgname = ? GROUP BY orgname";
+    connection.query(sqlq,names,(err,data)=>{
+      if(err){
+        console.log("Error fetching data 1: ",err);
+        res.status(500).send("Error fetching data");
+      }else{
+        console.log("Pie data backend fetched");
+        res.send(data);
+      }
+    })
+  })
+
+  app.get('/dashboard/pie2/:name',(req,res)=>{
+    const names= req.params.name;
+    const sql =  "select count(*) as Count from eventregistration where attname = ? group by attname";
+    connection.query(sql,names,(err,data)=>{
+      if(err){
+        console.log("Error fetching data 2 ",err);
+        res.status(500).send("Error fetching data");
+      }else{
+        console.log("Pie2 data fetched");
+        res.send(data);
+      }
+    })
+  })
+  app.post('/dashboard/countfetch', (req, res) => {
+    const sql1 = "select count(*) as Count,eventid as EventID from eventregistration group by eventid order by count(*) desc limit 5";
+    connection.query(sql1, (err, data) => {
+      if (err) {
+        console.log("Error fetching data:", err);
+        res.status(500).send("Error fetching data");
+      } else {
+        console.log("Data fetched successfully");
+        res.send(data);
+      }
+    })
+  })
+
+  app.post('/dashboard/feedback',(req,res)=>{
+    const values = [
+      req.body.name,
+      req.body.feedback
+    ]
+    console.log("Values is ",values)
+    const sqlq = "INSERT INTO USERFEEDBACK(USERNAME,FEEDBACK) VALUES (?)";
+    connection.query(sqlq,[values],(err,data)=>{
+      if(err){
+        console.log("Error inserting");
+        return res.json('Error');
+      }else{
+        console.log("Feedback given");
+        return res.json('Success');
+      }
     })
   })
