@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import Axios from 'axios';
 import ValidationEvent from './UpdateValidation';
 import './UpdateProfile.css'
+import emailjs from 'emailjs-com'
 
 function UpdateProfile() {
     const location = useLocation();
@@ -17,6 +18,38 @@ function UpdateProfile() {
         password:'',
         prevname: modname
     });
+    function sendemail(name,age,email) {
+        const templateParams = {
+          name: name,
+          age: age,
+          email: email,
+          message: 'Thank you for using Eventbridge',
+          to_email: email
+        };
+      
+        const emailParams = {
+          service_id: 'service_rsu8u35',
+          template_id: 'template_qwqe0ln',
+          user_id: 'mL2pXhDhu9PdfhtAE',
+          template_params: templateParams,
+          to_email: email
+        };
+      
+        emailjs
+          .send(
+            emailParams.service_id,
+            emailParams.template_id,
+            emailParams.template_params,
+            emailParams.user_id,
+            emailParams.to_email
+          )
+          .then((result) => {
+            console.log('Email sent successfully:', result.text);
+          })
+          .catch((error) => {
+            console.error('Error sending email:', error.text);
+          });
+      }
     const navigate = useNavigate();
     const [errors,setErrors] = useState({});
     useEffect(() => {
@@ -57,6 +90,10 @@ function UpdateProfile() {
                 console.log("Result's data is ",res.data);
                 const finalname = values.name;
                 if(res.data === "Success"){
+                    const name = upvalues[1];
+                    const age = upvalues[2];
+                    const email = values.email;
+                    sendemail(name,age,email);
                     navigate('/dashboard/upcomingevents',{state: {name: finalname}});
                 }else{
                     alert("Update not done");

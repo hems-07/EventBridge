@@ -42,6 +42,9 @@ function DashboardNavbar(props) {
   function updateprofile(){
     navigate('/dashboard/updateprofile',{state: {name: updname}});
   }
+  function Feedback(){
+    navigate('/dashboard/feedback',{state: {name: modname}})
+  }
   return (
     <nav className='navbar'>
       <div className='navbar-logo'>
@@ -55,6 +58,7 @@ function DashboardNavbar(props) {
         <li><button className="btn btn-info" onClick={participatedevents}>Participated Events</button></li>
         <li><button className="btn btn-info" onClick={createevent}>Create Event</button></li>
         <li><button className='btn btn-info' onClick={updateprofile}>Update Profile</button></li>
+        <li><button className='btn btn-info' onClick={Feedback}>Give Feedback</button></li>
         <li><button className='btn btn-info' onClick={handlelogout}>Logout</button></li>
        
       </ul>

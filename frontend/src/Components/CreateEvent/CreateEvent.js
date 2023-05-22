@@ -6,6 +6,7 @@ import Axios from 'axios';
 import ValidationEvent from './ValidationEvent';
 import { useLocation } from 'react-router-dom';
 import './CreateEvent.css'
+import emailjs from 'emailjs-com'
 
 function CreateEvent() {
     const location = useLocation();
@@ -16,9 +17,48 @@ function CreateEvent() {
         venue:'',
         date:'',
         email:'',
+        timings:'',
         accommodation:'',
         type:''
     })
+    function sendemail(emailid, name, venue,date,title,timings,accommodation,type) {
+        const templateParams = {
+          name: name,
+          title: title,
+          orgname: name,
+          venue: venue,
+          date: date,
+          timings: timings,
+          orgemail: emailid,
+          accommodation: accommodation,
+          type: type,
+          message: 'Thank you for using Eventbridge',
+          to_email: emailid
+        };
+      
+        const emailParams = {
+          service_id: 'service_wimtjw7',
+          template_id: 'template_hppxait',
+          user_id: '6LPkf5o1DnbiXrMSG',
+          template_params: templateParams,
+          to_email: emailid
+        };
+      
+        emailjs
+          .send(
+            emailParams.service_id,
+            emailParams.template_id,
+            emailParams.template_params,
+            emailParams.user_id,
+            emailParams.to_email
+          )
+          .then((result) => {
+            console.log('Email sent successfully:', result.text);
+          })
+          .catch((error) => {
+            console.error('Error sending email:', error.text);
+          });
+      }
     const navigate = useNavigate();
     const [errors,setErrors] = useState({});
     const handleSubmit = (event) =>{
@@ -30,6 +70,15 @@ function CreateEvent() {
             Axios.post('http://localhost:3002/dashboard/createevent',values)
             .then(res => {
                 if(res.data === "Success"){
+                    const emailid= values.email;
+                    const name=values.name;
+                    const venue = values.venue;
+                    const date  = values.date;
+                    const title = values.title;
+                    const timings= values.timings;
+                    const accommodation = values.accommodation;
+                    const type = values.type;
+                    sendemail(emailid,name,venue,date,title,timings,accommodation,type);
                     navigate('/success4');
                         setTimeout( () => {
                             navigate('/dashboard/hostedevents',{state: {name: modname}});
@@ -85,6 +134,12 @@ function CreateEvent() {
                     <label className='d-flex justify-content-left align-items-left mb-2'><strong className = "str1">Organizer Email</strong></label>
                     <input type="email" placeholder='Enter Organizer Email' name='email' onChange={handleInput} className='f02'/>
                     {errors.email && <span className='text-danger'>{errors.email}</span>}
+                    
+                </div>
+                <div className='mb-3'>
+                    <label className='d-flex justify-content-left align-items-left mb-2'><strong className = "str1">Timings</strong></label>
+                    <input type="text" placeholder='Enter timings' name='timings' onChange={handleInput} className='f02'/>
+                    {errors.venue && <span className='text-danger'>{errors.venue}</span>}
                     
                 </div>
                 <div className='mb-3'>

@@ -16,6 +16,8 @@ import LoginSuccessful from './Components/Form/LoginSuccessful';
 import RegisterSuccessful from './Components/Form/RegisterSuccessful';
 import EventSuccess from './Components/EventRegister/EventSuccess';
 import CreateSuccess from './Components/CreateEvent/CreateSucces';
+import Feedback from './Components/Feedback/Feedback';
+import FeedbackSuccessful from './Components/Feedback/FeedbackSuccessful';
 
 
 function App() {
@@ -32,6 +34,7 @@ function App() {
         <Route path="/success2" element={<RegisterSuccessful />} ></Route>
         <Route path="/success3" element={<EventSuccess />} ></Route>
         <Route path="/success4" element={<CreateSuccess />} ></Route>
+        <Route path="/success5" element={<FeedbackSuccessful/>}></Route>
         <Route path="/dashboard" element={<Dashboard/>}></Route>
         <Route path="/dashboard/createevent" element={<CreateEvent/>}></Route>
         <Route path="/dashboard/participatedevents" element={<ParticipatedEvents/>}></Route>
@@ -39,6 +42,7 @@ function App() {
         <Route path="/dashboard/upcomingevents" element={<UpcomingEvents/>}></Route>
         <Route path="/dashboard/eventregister" element={<EventRegister/>}></Route>
         <Route path="/dashboard/updateprofile" element={<UpdateProfile/>}></Route>
+        <Route path="/dashboard/feedback" element={<Feedback/>}></Route>
     </Routes>
     </BrowserRouter>
   );
