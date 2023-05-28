@@ -304,7 +304,7 @@ app.post('/dashboard/createevent',(req,res)=>{
         console.log("Error fetching data:", err);
         res.status(500).send("Error fetching data");
       } else {
-        console.log("Data fetched successfully");
+        //console.log("Data fetched successfully");
         res.send(data);
       }
     })
@@ -324,6 +324,64 @@ app.post('/dashboard/createevent',(req,res)=>{
       }else{
         console.log("Feedback given");
         return res.json('Success');
+      }
+    })
+  })
+
+  app.get('/agefetch/:name',(req,res)=>{
+    const ages=req.params.name;
+    console.log("Required name is ",ages)
+    const sqlq = "select avg(age) as age from events,eventregistration where events.eventid=eventregistration.eventid and events.orgname=? group by events.orgname";
+    connection.query(sqlq,ages,(err,data)=>{
+      if(err){
+        console.log("Error in retrieving the age");
+        res.status(500).send("Error fetching data");
+      }else{
+        console.log("age sent");
+        res.send(data);
+      }
+    })
+  })
+
+  app.post('/dashboard/typefetch',(req,res)=>{
+    console.log("Inside type bar chart fetch-backend");
+    const sqlq = "select type as Type,count(*) as Count from events group by type order by count(type) desc limit 5";
+    connection.query(sqlq,(err,data)=>{
+      if (err) {
+        console.log("Error fetching data:", err);
+        res.status(500).send("Error fetching data");
+      } else {
+        console.log("Type bar chart fetched");
+        res.send(data);
+      }
+    })
+  })
+
+  app.get('/dashboard/totalcount/:name',(req,res)=>{
+    const total = req.params.name;
+    console.log("Inside the total count");
+    const sqlq = " select count(attemail) as total from events,eventregistration where events.eventid=eventregistration.eventid and events.orgname=?";
+    connection.query(sqlq,total,(err,data)=>{
+      if (err) {
+        console.log("Error fetching data:", err);
+        res.status(500).send("Error fetching data");
+      } else {
+        console.log("Total count fetched");
+        res.send(data);
+      }
+    })
+  })
+  app.get('/dashboard/totalevent/:name',(req,res)=>{
+    const total = req.params.name;
+    console.log("Inside the total events, name = ",total);
+    const sqlq = "select  count(eventid) as totaleve from events where orgname=?";
+    connection.query(sqlq,total,(err,data)=>{
+      if (err) {
+        console.log("Error fetching data:", err);
+        res.status(500).send("Error fetching data");
+      } else {
+        console.log("Total events fetched");
+        res.send(data);
       }
     })
   })
