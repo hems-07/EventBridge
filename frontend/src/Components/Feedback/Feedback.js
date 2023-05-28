@@ -10,7 +10,7 @@ function Feedback() {
     const location = useLocation();
     const modname = location.state.name;
     console.log("Value of modname is ",modname);
-    const emailid = 'pramodhr181@gmail.com';
+    const emailid = 'eventbridge1@gmail.com';
     const [values, setvalues] = useState({
         Username: modname,
         feedback: ''

@@ -22,7 +22,7 @@ export const featuresData = [
 	},
 	{
 		name: 'Maintenance',
-		description: 'Our code is written in highest standards, which makes it highly sustainable',
+		description: 'Expert Maintenance for Seamless Success',
 		icon: iconStyle(GrHostMaintenance),
 		imgClass: 'three',
 	},
@@ -33,15 +33,15 @@ export const featuresData = [
 		imgClass: 'four',
 	},
 	{
-		name: 'Marketing and promotion',
-		description: 'The ability to market and promote events',
+		name: 'Attendee Feedback Collection',
+		description: 'Gather valuable insights and improve future events through interactive surveys',
 		icon: iconStyle(BiDollar),
 		imgClass: 'five',
 	},
 	{
 		name: 'Event analytics',
 		description:
-			'The ability to track and analyze event data, including attendance, revenue, and attendee feedback ',
+			'The ability to track and analyze event data, including attendance, event types, and attendee feedback ',
 		icon: iconStyle(AiOutlineCloudUpload),
 		imgClass: 'six',
 	},

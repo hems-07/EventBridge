@@ -9,11 +9,6 @@ import './EventRegister.css';
 import emailjs from 'emailjs-com'
 
 function EventRegister() {
-    /*const location = useLocation();
-    const modname = location.state.name;
-    const eventidc = location.state.eventid;
-    console.log("Modname is ",modname);
-    console.log("Eventid is ",eventidc);*/
     const location = useLocation();
     const eveid = location.state.eventid;
     const chname = location.state.name;

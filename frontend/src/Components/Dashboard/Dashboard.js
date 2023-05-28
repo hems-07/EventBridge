@@ -19,8 +19,12 @@ Chart.register(
 );
 function Dashboard(props) {
   const [values, setValues] = useState([]);
+  const [agevalues,setagevalues] = useState(0);
+  const [totalcount,settotalcount] = useState(0);
+  const [totalevents,settotalevents] = useState(0);
   const location = useLocation();
   const emailid = location.state.email;
+  //var agevalue=20;
   console.log(emailid);
   const index = emailid.indexOf("@");
   const namep = emailid.slice(0,index);
@@ -65,6 +69,18 @@ function Dashboard(props) {
       },
     ],
   });
+  const [typebar,settypebar] = useState({
+    labels: [],
+    datasets: [
+      {
+        label: 'No. of events',
+        data: [],
+        backgroundColor: 'aqua',
+        borderColor: 'black',
+        borderWidth: 1,
+      },
+    ],
+  })
   const optionsbar = {
     scales: {
       x: {
@@ -104,6 +120,26 @@ function Dashboard(props) {
     }
 
   }
+
+  const typeoptions = {
+    scales: {
+      x: {
+          title: {
+              display: true,
+              text: 'Event type',
+              color: 'red'
+          }
+      },
+      y: {
+          title: {
+              display: true,
+              text: 'Count of events',
+              color: 'red'
+          }
+      }
+    }
+
+  }
   const pieoptions = {
 
   }
@@ -115,9 +151,9 @@ function Dashboard(props) {
   useEffect(()=>{
     Axios.post('http://localhost:3002/dashboard/countfetch')
     .then((response)=>{
-      console.log("Data fetched successfully");
+      //console.log("Data fetched successfully");
         const data = response.data;
-        console.log(data);
+      //  console.log(data);
         const chartDatas = {
           labels: data.map((row) => row.EventID),
           datasets: [
@@ -131,8 +167,10 @@ function Dashboard(props) {
           ],
         };
         setChartData(chartDatas);
-        console.log("Chartdata is ",chartDatas);
+     //   console.log("Chartdata is ",chartDatas);
     })
+
+    
     
   })
   
@@ -141,10 +179,10 @@ function Dashboard(props) {
     
     Axios.get(`http://localhost:3002/dashboard/pie1/${name}`)
     .then(response => {
-      console.log("stuff here")
-      console.log(response.data);
+      //console.log("stuff here")
+      //console.log(response.data);
       val1=response.data[0].Count;
-      console.log("val1= ",val1);
+     // console.log("val1= ",val1);
      // setData1(response.data);
     })
     .catch(error => {
@@ -154,11 +192,11 @@ function Dashboard(props) {
   // Fetch data for the second component with the name parameter
   Axios.get(`http://localhost:3002/dashboard/pie2/${name}`)
     .then(response => {
-      console.log(response.data);
+      //console.log(response.data);
       val2=response.data[0].Count;
       //setData2(response.data);
-      console.log("VAL2= ",val2," val1= ",val1);
-      console.log("here insdde val1= ",val1," val2= ",val2)
+      //console.log("VAL2= ",val2," val1= ",val1);
+      //console.log("here insdde val1= ",val1," val2= ",val2)
       const piedata = {
         labels: ['Hosted','Participated'],
         datasets: [
@@ -168,13 +206,44 @@ function Dashboard(props) {
           }
         ]
       };
-      console.log("inside piedata is ",piedata);
+      //console.log("inside piedata is ",piedata);
       setpiedata(piedata);
 
     })
     .catch(error => {
       console.error('Error fetching data for the second component:', error);
     });
+  Axios.get(`http://localhost:3002/agefetch/${name}`)
+  .then((res)=>{
+    //console.log("Success in retrieving the required age");
+    //console.log(res.data);
+    
+    setagevalues(res.data[0].age);
+  })
+  .catch(error=>{
+    console.error('Error in fetching the required age');
+  })
+  Axios.get(`http://localhost:3002/dashboard/totalcount/${name}`)
+  .then((res)=>{
+    //console.log("Success in retrieving the required age");
+    //console.log(res.data);
+    
+    settotalcount(res.data[0].total);
+  })
+  .catch(error=>{
+    console.error('Error in fetching the required age');
+  })
+  Axios.get(`http://localhost:3002/dashboard/totalevent/${name}`)
+  .then((res)=>{
+    //console.log("Success in retrieving the required age");
+    //console.log(res.data);
+    
+    settotalevents(res.data[0].totaleve);
+  })
+  .catch(error=>{
+    console.error('Error in fetching the required age');
+  })
+
     
   }, []);
   useEffect(() => {
@@ -182,7 +251,7 @@ function Dashboard(props) {
       .then((response) => {
         console.log("Bars fetched successfully");
         const data = response.data;
-        console.log(data);
+        //console.log(data);
         const chartData = {
           labels: data.map((row) => row.Orgname),
           datasets: [
@@ -196,19 +265,42 @@ function Dashboard(props) {
           ],
         };
         setBarData(chartData);
-        console.log("second bar data is ",chartData)
+        //console.log("second bar data is ",chartData)
       })
       .catch((error) => {
         console.log("Error fetching data from /dashboard/bars");
       })
-  }, []);
 
+      Axios.post('http://localhost:3002/dashboard/typefetch')
+      .then((response)=>{
+        console.log("Type bar fetched successfully");
+        const data = response.data;
+        const typedata = {
+          labels: data.map((row) => row.Type),
+          datasets: [
+            {
+              label: 'No. of events',
+              data: data.map((row) => row.Count),
+              backgroundColor: 'aqua',
+              borderColor: 'black',
+              borderWidth: 1,
+            },
+          ],
+        };
+        settypebar(typedata);
+      })
+      .catch((error)=>{
+        console.log("error");
+      })
+  }, []);
+  const averagecount = totalcount/totalevents;
+  var roundedResult = averagecount.toFixed(2);
   return (
     <div className='dashboard-container'>
       <DashboardNavbar name={modname}/>
       <h1>Welcome {modname}</h1>
       <div className='dashboard-content'>
-        <h2 className="font-weight-bold text-dark pt-3 pb-2 border-bottom border-4 border-primary mb-5 ml-5">Analytics to be displayed here</h2>
+        <h2 className="font-weight-bold text-dark pt-3 pb-2 border-bottom border-4 border-primary mb-5 ml-5">Analytics of Eventbridge</h2>
 
         {console.log("piedata inside",piedata)}
         {console.log("Chardata iniside",chartData)}
@@ -221,6 +313,16 @@ function Dashboard(props) {
       </div>
       <div style={{padding: '20px', width: '50%'}}>
         <Pie data={piedata} options={pieoptions} />
+      </div>
+      <div style={{ padding: '20px', margin: 'auto', width: '70%', height: '70%' }}>
+        <h3>Most famous event types</h3>
+        <Bar data={typebar} options={typeoptions} />
+      </div>
+      <div style={{padding: '20px', width: '50%'}}>
+        <h5>Average age of participants for your events : {agevalues}</h5>
+      </div>
+      <div style={{padding: '20px', width: '50%'}}>
+        <h5>Average attendance for your events : {roundedResult}</h5>
       </div>
       
     </div>
